@@ -1,9 +1,9 @@
-%global nspr_version 4.8.8
+%global nspr_version 4.8.9
 
 Summary:          Network Security Services Utilities Library
 Name:             nss-util
-Version:          3.12.10
-Release:          1.el6.R
+Version:          3.13.1
+Release:          3%{?dist}.R
 License:          MPLv1.1 or GPLv2+ or LGPLv2+
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Group:            System Environment/Libraries
@@ -31,6 +31,8 @@ Source1:          nss-split-util.sh
 Source2:          nss-util.pc.in
 Source3:          nss-util-config.in
 
+# remove when we update pick up the fix from upstream
+Patch24:           gnuc-minor-def-fix.patch
 
 %description
 Utilities for Network Security Services and the Softoken module
@@ -51,7 +53,8 @@ Header and library files for doing development with Network Security Services.
 
 %prep
 %setup -q
-
+# remove when we update and pick up the fix from upstream
+%patch24 -p1 -b .gnuc-minor
 
 %build
 
@@ -152,11 +155,9 @@ done
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
 
-%post
-/sbin/ldconfig >/dev/null 2>/dev/null
+%post -p /sbin/ldconfig
 
-%postun
-/sbin/ldconfig >/dev/null 2>/dev/null
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -204,7 +205,31 @@ done
 %{_includedir}/nss3/utilrename.h
 
 %changelog
-* Fri May 06 2011 Elio Maldonado <emaldona@redhat.com> - 3.12.10-1.el6.R
+* Thu Jan 26 2012 Arkady L. Shane <ashejn@russianfedora.ru> - 3.13.1-3.R
+- rebuilt for EL
+
+* Fri Dec 02 2011 Elio Maldonado Batiz <emaldona@redhat.com> - 3.13.1-3
+- Retagging
+
+* Fri Dec 02 2011 Elio Maldonado <emaldona@redhat.com> - 3.13.1-2
+- Fix a gnuc def typo
+
+* Thu Nov 03 2011 Elio Maldonado <emaldona@redhat.com> - 3.13.1-1
+- Update to NSS_3_13_1_RTM
+
+* Sat Oct 15 2011 Elio Maldonado <emaldona@redhat.com> - 3.13-1
+- Update to NSS_3_13_RTM
+
+* Thu Oct 07 2011 Elio Maldonado <emaldona@redhat.com> - 3.13-0.1.rc0.1
+- Update to NSS_3_13_RC0
+
+* Thu Sep  8 2011 Ville Skyttä <ville.skytta@iki.fi> - 3.12.11-2
+- Avoid %%post/un shell invocations and dependencies.
+
+* Tue Aug 09 2011 Elio Maldonado <emaldona@redhat.com> - 3.12.11-1
+- Update to NSS_3_12_11_RTM
+
+* Fri May 06 2011 Elio Maldonado <emaldona@redhat.com> - 3.12.10-1
 - Update to NSS_3_12_10_RTM
 
 * Mon Apr 25 2011 Elio Maldonado Batiz <emaldona@redhat.com> - 3.12.10-0.1.beta1
